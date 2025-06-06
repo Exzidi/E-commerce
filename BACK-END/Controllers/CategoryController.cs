@@ -28,8 +28,6 @@ namespace BACK_END.Controllers
             {
                 var categories = await _context.Categories
                     .Include(c => c.ProdCategories)
-                        .ThenInclude(pc => pc.Products)
-                            .ThenInclude(p => p.ProductImage)
                     .ToListAsync();
 
                 var result = _mapper.Map<List<CategoryResponseDto>>(categories);
@@ -48,8 +46,6 @@ namespace BACK_END.Controllers
             {
                 var category = await _context.Categories
                     .Include(c => c.ProdCategories)
-                        .ThenInclude(pc => pc.Products)
-                            .ThenInclude(p => p.ProductImage)
                     .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (category == null)

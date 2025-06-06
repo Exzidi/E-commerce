@@ -1,5 +1,7 @@
 ﻿using BACK_END.Data;
 using LIBRARY.Shared.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,7 @@ namespace BACK_END.Controllers
 {
     [ApiController]
     [Route("api/v1/city")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CityController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,6 +31,14 @@ namespace BACK_END.Controllers
             {
                 return BadRequest("Error al listar los ciudades: " + ex.Message);
             }
+        }
+        [AllowAnonymous]
+        [HttpGet("combo/{stateId:int}")]
+        public async Task<ActionResult> GetCombo(int stateId)
+        {
+            return Ok(await _context.Cities
+             .Where(x => x.StateId == stateId)
+            .ToListAsync());
         }
 
         [HttpPost]

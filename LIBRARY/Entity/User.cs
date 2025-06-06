@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LIBRARY.Shared.Entity
 {
-    public class User:IdentityUser
+    public class User : IdentityUser
     {
 
         [MaxLength(100)]
@@ -35,13 +35,15 @@ namespace LIBRARY.Shared.Entity
         [Display(Name = "Dirección")]
         public string Address { get; set; } = null!;
 
+        [Display(Name = "Foto")]
+        public string? Photo { get; set; }
+
         [Display(Name = "Tipo de Usuario")]
         public UserType UserType { get; set; }
 
-
         public City? City { get; set; }
 
-        [Display (Name = "Ciudad")]
+        [Display(Name = "Ciudad")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una ciudad")]
         public int CityId { get; set; }
     }

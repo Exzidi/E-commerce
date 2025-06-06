@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-
 namespace LIBRARY.Shared.Entity
 {
     public class Category
@@ -12,11 +11,9 @@ namespace LIBRARY.Shared.Entity
         [MaxLength(100)]
         [Required(ErrorMessage = "El campo es Obligatorio")]
         public string Name { get; set; }
-        public string Description { get; set; }
+        public ICollection<ProdCategory> ProdCategories { get; set; }
 
-        public ICollection<ProdCategory> ProdCategories{ get; set; }
-
-        public int ProdCategoriesNumber => ProdCategories == null ? 0 : ProdCategories.Count();
+        public int ProdCategoriesNumber => ProdCategories == null ? 0 : ProdCategories.Count;
 
     }
 }

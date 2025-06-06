@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BACK_END.Data;
-using BACK_END.Service;
 using LIBRARY.Shared.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,7 @@ namespace BACK_END.Controllers
             try
             {
                 var products = await _context.Products
-                    .Include(p => p.ProductImage)
+                    .Include(p => p.ProductImages)
                     .ToListAsync();
 
                 var response = _mapper.Map<List<ProductResponseDto>>(products);
@@ -45,7 +44,7 @@ namespace BACK_END.Controllers
         public async Task<IActionResult> getProductById(int id)
         {
             var product = await _context.Products
-                .Include(p => p.ProductImage)
+                .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -64,11 +63,13 @@ namespace BACK_END.Controllers
 
                 var product = _mapper.Map<Product>(dto);
 
-                product.ProductImage = new ProductImage
+                product.ProductImages = new List<ProductImage>
                 {
-                    Name = dto.ImageFile.FileName,
-                    ImageUrl = uploadResult.SecureUrl.ToString(),
-                    ImageId = uploadResult.PublicId
+                    new ProductImage
+                    {
+                        ImageUrl = uploadResult.SecureUrl.ToString(),
+                        ImageId = uploadResult.PublicId
+                    }
                 };
 
                 _context.Products.Add(product);
@@ -89,7 +90,7 @@ namespace BACK_END.Controllers
             try
             {
                 var product = await _context.Products
-                    .Include(p => p.ProductImage)
+                    .Include(p => p.ProductImages)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (product == null)
@@ -101,20 +102,30 @@ namespace BACK_END.Controllers
                 // Si viene una nueva imagen, reemplaza
                 if (dto.ImageFile != null)
                 {
-                    if (product.ProductImage != null)
+                    // Remove all existing images
+                    if (product.ProductImages != null && product.ProductImages.Any())
                     {
-                        await _cloudinary.DeleteImageAsync(product.ProductImage.ImageId);
-                        _context.ProductImages.Remove(product.ProductImage);
+                        foreach (var image in product.ProductImages.ToList())
+                        {
+                            await _cloudinary.DeleteImageAsync(image.ImageId);
+                            _context.ProductImages.Remove(image);
+                        }
                     }
 
                     var uploadResult = await _cloudinary.UploadImageAsync(dto.ImageFile);
 
-                    product.ProductImage = new ProductImage
+                    // Initialize if null
+                    if (product.ProductImages == null)
                     {
-                        Name = dto.ImageFile.FileName,
+                        product.ProductImages = new List<ProductImage>();
+                    }
+
+                    // Add new image
+                    product.ProductImages.Add(new ProductImage
+                    {
                         ImageUrl = uploadResult.SecureUrl.ToString(),
                         ImageId = uploadResult.PublicId
-                    };
+                    });
                 }
 
                 await _context.SaveChangesAsync();
@@ -138,16 +149,19 @@ namespace BACK_END.Controllers
             try
             {
                 var product = await _context.Products
-                    .Include(p => p.ProductImage)
+                    .Include(p => p.ProductImages)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (product == null)
                     return NotFound();
 
-                if (product.ProductImage != null)
+                if (product.ProductImages != null && product.ProductImages.Any())
                 {
-                    await _cloudinary.DeleteImageAsync(product.ProductImage.ImageId);
-                    _context.ProductImages.Remove(product.ProductImage);
+                    foreach (var image in product.ProductImages.ToList())
+                    {
+                        await _cloudinary.DeleteImageAsync(image.ImageId);
+                        _context.ProductImages.Remove(image);
+                    }
                 }
 
                 _context.Products.Remove(product);

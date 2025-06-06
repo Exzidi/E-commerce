@@ -10,7 +10,7 @@ namespace BACK_END.Mapper
         {
             // De DTO -> Entidad
             CreateMap<ProductCreateDto, Product>()
-                .ForMember(dest => dest.ProductImage, opt => opt.Ignore()); // porque se sube aparte
+                .ForMember(dest => dest.ProductImages, opt => opt.Ignore()); // porque se sube aparte
 
             // De Entidad -> DTO de respuesta
             CreateMap<Product, ProductResponseDto>();

@@ -5,15 +5,16 @@ namespace LIBRARY.Shared.DTO
     public class LoginDTO
     {
         [DataType(DataType.EmailAddress)]
-        [Required(ErrorMessage = "Este campo es requerido")]
-        [Display(Name = "Correo")]
-        [EmailAddress(ErrorMessage = "El correo no es valido")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [Display(Name = "Correo electrónico")]
+        [EmailAddress(ErrorMessage = "Debe ingresar un correo válido.")]
         public required string Email { get; set; }
+
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Este campo es requerido")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [Display(Name = "Contraseña")]
-        [StringLength(maximumLength: 20, MinimumLength = 6
-            , ErrorMessage = "La contraseña debe tener minimo seis caracteres")]
+        [StringLength(20, MinimumLength = 6,
+            ErrorMessage = "El campo {0} debe tener entre {2} y {1} caracteres.")]
         public required string Password { get; set; }
     }
 }

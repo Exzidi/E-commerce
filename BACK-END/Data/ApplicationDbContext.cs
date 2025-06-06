@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using LIBRARY.Shared.Entity;
+﻿using LIBRARY.Shared.Entity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 namespace BACK_END.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){}
         public DbSet<Country> Countries { get; set; }
@@ -12,7 +13,7 @@ namespace BACK_END.Data
         public DbSet<Product> Products{ get; set; }
         public DbSet<ProductImage> ProductImages{ get; set; }
         public DbSet<ProdCategory> ProdCategories{ get; set; }
-        public DbSet<User> Users{ get; set; }
+        public DbSet <UserImage> UserImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,18 +30,10 @@ namespace BACK_END.Data
             modelBuilder.Entity<City>()
                 .HasIndex(c => new { c.Name, c.StateId })
                 .IsUnique();
-
-            modelBuilder.Entity<ProdCategory>()
-                .HasIndex(pc => new { pc.Name, pc.CategoryId })
-                .IsUnique();
-
+            modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<Product>()
-                .HasIndex(p => new { p.Name, p.ProdCategoryId })
-                .IsUnique();
-
-            modelBuilder.Entity<ProductImage>()
-                .HasIndex(pi => new { pi.Name, pi.ProductId })
-                .IsUnique();
+                .Property(p => p.Price)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => new { u.Document, u.CityId })

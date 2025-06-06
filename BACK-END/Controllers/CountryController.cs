@@ -1,5 +1,7 @@
 ﻿using BACK_END.Data;
 using LIBRARY.Shared.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,8 @@ namespace BACK_END.Controllers
 {
     [ApiController]
     [Route("api/v1/country")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     public class CountryController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -53,6 +57,13 @@ namespace BACK_END.Controllers
             {
                 return BadRequest($"Error al obtener el país: {ex.Message}");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("combo")]
+        public async Task<ActionResult> GetCombo()
+        {
+            return Ok(await _context.Countries.ToListAsync());
         }
 
         [HttpPost]

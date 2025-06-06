@@ -13,13 +13,9 @@ namespace BACK_END.Mapper
             CreateMap<CreateCategoryDto, Category>()
                 .ForMember(dest => dest.ProdCategories, opt => opt.MapFrom(src => src.ProdCategories));
 
-            // Mapeo de CreateProdCategoryDto a ProdCategory
-            CreateMap<CreateProdCategoryDto, ProdCategory>()
-                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));
-
             // Mapeo de CreateProductDto a Product
             CreateMap<CreateProductDto, Product>()
-                .ForMember(dest => dest.ProductImage, opt => opt.MapFrom(src => src.ProductImage));
+                .ForMember(dest => dest.ProductImages, opt => opt.Ignore());
 
             // Mapeo de CreateProductImageDto a ProductImage
             CreateMap<CreateProductImageDto, ProductImage>();

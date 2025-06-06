@@ -1,5 +1,7 @@
 ﻿using BACK_END.Data;
 using LIBRARY.Shared.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,7 @@ namespace BACK_END.Controllers
 {
     [ApiController]
     [Route("api/v1/state")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StateController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,6 +31,14 @@ namespace BACK_END.Controllers
             {
                 return BadRequest("Error al listar los estados/departamentos: " + ex.Message);
             }
+        }
+        [AllowAnonymous]
+        [HttpGet("combo/{countryId:int}")]
+        public async Task<ActionResult> GetCombo(int countryId)
+        {
+            return Ok(await _context.States
+            .Where(x => x.CountryId == countryId)
+            .ToListAsync());
         }
 
         [HttpPost]
