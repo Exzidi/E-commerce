@@ -60,7 +60,17 @@ namespace BACK_END.Helpers
 
         public async Task<SignInResult> LoginAsync(LoginDTO model)
         {
-            return await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return SignInResult.Failed;
+            }
+
+            return await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                model.Password,
+                isPersistent: false,
+                lockoutOnFailure: false);
         }
         public async Task LogoutAsync()
         {
